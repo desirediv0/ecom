@@ -1,0 +1,431 @@
+// This is your complete Prisma schema file for an e-commerce supplements site
+// npx prisma init
+// npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Authentication & Management
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String?
+  name          String?
+  phone         String?
+  role          UserRole @default(CUSTOMER)
+  isActive      Boolean  @default(true)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // User data
+  addresses     Address[]
+  orders        Order[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+
+  // OAuth data
+  accounts Account[]
+
+  // Razorpay data
+  razorpayCustomerId String?
+}
+
+// Authentication accounts for social login
+model Account {
+  id                 String    @id @default(uuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider           String // "google", "credentials", etc.
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([provider, providerAccountId])
+}
+
+// Admin specific authentication
+model Admin {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        AdminRole    @default(ADMIN)
+  isActive    Boolean      @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  permissions Permission[]
+}
+
+model Permission {
+  id       String @id @default(uuid())
+  adminId  String
+  admin    Admin  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  resource String // "orders", "products", "users", etc.
+  action   String // "create", "read", "update", "delete"
+
+  @@unique([adminId, resource, action])
+}
+
+enum UserRole {
+  CUSTOMER
+  SUPPORT
+}
+
+enum AdminRole {
+  ADMIN
+  SUPER_ADMIN
+  MANAGER
+  CONTENT_EDITOR
+  SUPPORT_AGENT
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String?
+  street     String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  isDefault  Boolean @default(false)
+  orders     Order[]
+}
+
+// Product Management
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  image       String?
+  slug        String     @unique
+  parentId    String?
+  parent      Category?  @relation("CategorySubcategories", fields: [parentId], references: [id])
+  children    Category[] @relation("CategorySubcategories")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Product {
+  id            String           @id @default(uuid())
+  name          String
+  description   String?
+  slug          String           @unique
+  categoryId    String
+  category      Category         @relation(fields: [categoryId], references: [id])
+  isSupplement  Boolean          @default(true) // Flag to identify if it's a supplement product
+  ingredients   String?
+  nutritionInfo Json? // Nutrition facts as JSON
+  featured      Boolean          @default(false)
+  isActive      Boolean          @default(true)
+  images        ProductImage[]
+  variants      ProductVariant[] // Different combinations of flavor and weight
+  reviews       Review[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  wishlistItems WishlistItem[]
+  orderItems    OrderItem[]
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Flavor {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  image           String?
+  productVariants ProductVariant[]
+}
+
+model Weight {
+  id              String           @id @default(uuid())
+  value           Float
+  unit            String // e.g., "g", "kg", "lb"
+  productVariants ProductVariant[]
+}
+
+// Product variant with unique price for each flavor+weight combination
+model ProductVariant {
+  id         String      @id @default(uuid())
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku        String      @unique
+  flavorId   String?
+  flavor     Flavor?     @relation(fields: [flavorId], references: [id])
+  weightId   String?
+  weight     Weight?     @relation(fields: [weightId], references: [id])
+  price      Decimal     @db.Decimal(10, 2)
+  salePrice  Decimal?    @db.Decimal(10, 2)
+  quantity   Int         @default(0)
+  isActive   Boolean     @default(true)
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@unique([productId, flavorId, weightId]) // Ensure unique combinations
+}
+
+model Review {
+  id        String       @id @default(uuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Int          @db.SmallInt
+  title     String?
+  comment   String?
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([userId, productId])
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model WishlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// Order Management
+model Order {
+  id                           String           @id @default(uuid())
+  orderNumber                  String           @unique
+  userId                       String
+  user                         User             @relation(fields: [userId], references: [id])
+  items                        OrderItem[]
+  status                       OrderStatus      @default(PENDING)
+  subTotal                     Decimal          @db.Decimal(10, 2)
+  tax                          Decimal          @db.Decimal(10, 2)
+  shippingCost                 Decimal          @db.Decimal(10, 2)
+  discount                     Decimal          @default(0) @db.Decimal(10, 2)
+  couponCode                   String?
+  total                        Decimal          @db.Decimal(10, 2)
+  shippingAddressId            String?
+  shippingAddress              Address?         @relation(fields: [shippingAddressId], references: [id])
+  billingAddressSameAsShipping Boolean          @default(true)
+  billingAddress               Json?
+  notes                        String?
+  createdAt                    DateTime         @default(now())
+  updatedAt                    DateTime         @updatedAt
+  razorpayPayment              RazorpayPayment?
+  tracking                     Tracking?
+  cancelReason                 String?
+  cancelledAt                  DateTime?
+  cancelledBy                  String? // User ID or Admin ID who cancelled
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model OrderItem {
+  id           String         @id @default(uuid())
+  orderId      String
+  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product        @relation(fields: [productId], references: [id])
+  variantId    String
+  variant      ProductVariant @relation(fields: [variantId], references: [id])
+  price        Decimal        @db.Decimal(10, 2)
+  quantity     Int
+  subtotal     Decimal        @db.Decimal(10, 2)
+  isSupplement Boolean        @default(true)
+}
+
+// Razorpay Payment Integration
+model RazorpayPayment {
+  id                String           @id @default(uuid())
+  orderId           String           @unique
+  order             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount            Decimal          @db.Decimal(10, 2)
+  currency          String           @default("INR")
+  razorpayOrderId   String           @unique
+  razorpayPaymentId String?          @unique
+  razorpaySignature String?
+  status            PaymentStatus    @default(PENDING)
+  paymentMethod     PaymentMethod?
+  notes             Json? // Additional notes/metadata for the payment
+  failureReason     String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  refunds           RazorpayRefund[]
+}
+
+model RazorpayRefund {
+  id                String          @id @default(uuid())
+  razorpayPaymentId String
+  razorpayPayment   RazorpayPayment @relation(fields: [razorpayPaymentId], references: [razorpayPaymentId], onDelete: Cascade)
+  amount            Decimal         @db.Decimal(10, 2)
+  razorpayRefundId  String          @unique
+  status            RefundStatus    @default(PENDING)
+  reason            String?
+  notes             Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+enum PaymentMethod {
+  CARD
+  NETBANKING
+  WALLET
+  UPI
+  EMI
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum RefundStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+// Shipment Tracking
+model Tracking {
+  id                String           @id @default(uuid())
+  orderId           String           @unique
+  order             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  trackingNumber    String
+  carrier           String
+  status            ShipmentStatus   @default(PROCESSING)
+  estimatedDelivery DateTime?
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+  updates           TrackingUpdate[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model TrackingUpdate {
+  id          String         @id @default(uuid())
+  trackingId  String
+  tracking    Tracking       @relation(fields: [trackingId], references: [id], onDelete: Cascade)
+  status      ShipmentStatus
+  location    String?
+  description String?
+  timestamp   DateTime       @default(now())
+}
+
+enum ShipmentStatus {
+  PROCESSING
+  SHIPPED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+// Discount Management
+model Coupon {
+  id             String       @id @default(uuid())
+  code           String       @unique
+  description    String?
+  discountType   DiscountType
+  discountValue  Decimal      @db.Decimal(10, 2)
+  minOrderAmount Decimal?     @db.Decimal(10, 2)
+  maxUses        Int?
+  usedCount      Int          @default(0)
+  startDate      DateTime
+  endDate        DateTime?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+// Dashboard Analytics
+model AdminDashboardStats {
+  id                String   @id @default(uuid())
+  date              DateTime @unique
+  totalSales        Decimal  @db.Decimal(10, 2)
+  orderCount        Int      @default(0)
+  userCount         Int      @default(0)
+  productViews      Int      @default(0)
+  topProducts       Json? // Array of top selling products
+  topCategories     Json? // Array of top categories
+  conversionRate    Float? // Percentage of visitors who made a purchase
+  averageOrderValue Decimal? @db.Decimal(10, 2)
+}
+
+// Activity Logging
+model ActivityLog {
+  id              String   @id @default(uuid())
+  entityType      String // "user", "admin", "product", "order"
+  entityId        String // ID of the entity
+  action          String // "create", "update", "delete", "login", "logout"
+  description     String?
+  performedBy     String // User ID or Admin ID
+  performedByRole String // "admin", "customer"
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+}
+
+// Inventory Management
+model InventoryLog {
+  id               String   @id @default(uuid())
+  variantId        String
+  quantityChange   Int // Can be positive (restock) or negative (sale)
+  reason           String // "sale", "return", "adjustment", "restock"
+  referenceId      String? // Order ID or other reference
+  previousQuantity Int
+  newQuantity      Int
+  notes            String?
+  createdAt        DateTime @default(now())
+  createdBy        String // Admin ID who made the change
+}
