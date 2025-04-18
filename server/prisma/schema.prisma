@@ -1,6 +1,4 @@
 // This is your complete Prisma schema file for an e-commerce supplements site
-// npx prisma init
-// npx prisma db push
 
 generator client {
   provider = "prisma-client-js"
