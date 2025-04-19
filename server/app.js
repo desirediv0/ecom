@@ -2,7 +2,18 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import Razorpay from "razorpay";
-
+import userRoutes from "./routes/user.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+import adminProductRoutes from "./routes/admin.product.routes.js";
+import adminOrderRoutes from "./routes/admin.order.routes.js";
+import adminCategoryRoutes from "./routes/admin.category.routes.js";
+import adminInventoryRoutes from "./routes/admin.inventory.routes.js";
+import adminFlavorRoutes from "./routes/admin.flavor.routes.js";
+import adminWeightRoutes from "./routes/admin.weight.routes.js";
+import adminCouponRoutes from "./routes/admin.coupon.routes.js";
+import publicRoutes from "./routes/public.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 
 const app = express();
 
@@ -15,7 +26,7 @@ app.use(cookieParser());
 // CORS Configuration
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN.split(','),
+    origin: process.env.CORS_ORIGIN.split(","),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: [
@@ -53,7 +64,7 @@ let razorpay;
 try {
   razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
   });
 
   console.log("Razorpay Initialized Successfully:");
@@ -63,7 +74,28 @@ try {
 
 export { razorpay };
 
+// API Routes
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminProductRoutes);
+app.use("/api/admin", adminOrderRoutes);
+app.use("/api/admin", adminCategoryRoutes);
+app.use("/api/admin", adminInventoryRoutes);
+app.use("/api/admin", adminFlavorRoutes);
+app.use("/api/admin", adminWeightRoutes);
+app.use("/api/admin", adminCouponRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api", publicRoutes);
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Server is running",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

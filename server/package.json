@@ -1,6 +1,7 @@
 {
-  "name": "server",
+  "name": "ecom-dashboard-server",
   "version": "1.0.0",
+  "description": "Backend server for ecommerce dashboard",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,28 +10,42 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "studio": "prisma studio",
-    "push": "prisma db push"
+    "push": "prisma db push",
+    "update-permissions": "node -r dotenv/config --experimental-json-modules scripts/updateAdminPermissions.js",
+    "fix-permissions": "node -r dotenv/config --experimental-json-modules scripts/fixPermissions.js",
+    "fix-super-admin": "node -r dotenv/config --experimental-json-modules scripts/fixSuperAdminPermissions.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "ecommerce",
+    "api",
+    "express",
+    "postgres",
+    "prisma"
+  ],
   "author": "",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.787.0",
-    "@prisma/client": "^6.6.0",
-    "axios": "^1.8.4",
+    "@aws-sdk/client-s3": "^3.529.1",
+    "@prisma/client": "^5.11.0",
     "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.7",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "date-fns": "^4.1.0",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.1",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.2",
-    "nodemailer": "^6.10.1",
-    "nodemon": "^3.1.9",
-    "prisma": "^6.6.0",
-    "razorpay": "^2.9.6",
-    "sharp": "^0.34.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "razorpay": "^2.9.2",
+    "sharp": "^0.33.3",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prisma": "^5.11.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

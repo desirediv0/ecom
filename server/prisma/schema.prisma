@@ -27,6 +27,7 @@ model User {
   orders        Order[]
   reviews       Review[]
   wishlistItems WishlistItem[]
+  cartItems     CartItem[]
 
   // OAuth data
   accounts Account[]
@@ -180,10 +181,25 @@ model ProductVariant {
   quantity   Int         @default(0)
   isActive   Boolean     @default(true)
   orderItems OrderItem[]
+  cartItems  CartItem[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
   @@unique([productId, flavorId, weightId]) // Ensure unique combinations
+}
+
+// Cart Model
+model CartItem {
+  id               String         @id @default(uuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity         Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([userId, productVariantId]) // A user can have only one entry per variant
 }
 
 model Review {

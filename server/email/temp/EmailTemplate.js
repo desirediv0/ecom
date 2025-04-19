@@ -4,7 +4,7 @@ export const getVerificationTemplate = (verificationLink) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email - Bansuri Vidya Mandir</title>
+    <title>Verify Your Email - EcomSupplements</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -23,7 +23,7 @@ export const getVerificationTemplate = (verificationLink) => `
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: linear-gradient(135deg, #ff0000, #cc0000);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: #ffffff;
             text-align: center;
             padding: 40px;
@@ -50,7 +50,7 @@ export const getVerificationTemplate = (verificationLink) => `
         .button {
             display: inline-block;
             padding: 15px 35px;
-            background: linear-gradient(135deg, #ff0000, #cc0000);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
@@ -80,7 +80,7 @@ export const getVerificationTemplate = (verificationLink) => `
             content: '✓';
             position: absolute;
             left: 0;
-            color: #ff0000;
+            color: #2563eb;
             font-weight: bold;
         }
         .footer {
@@ -95,17 +95,25 @@ export const getVerificationTemplate = (verificationLink) => `
 <body>
     <div class="container">
         <div class="header">
-            <h1>Welcome to Bansuri Vidya Mandir</h1>
+            <h1>Welcome to EcomSupplements</h1>
         </div>
         <div class="content">
-            <h2>Begin Your Musical Journey</h2>
-            <p>Dear Valued Student,</p>
-            <p>Welcome to Bansuri Vidya Mandir. Join our premier institute dedicated to teaching Indian classical flute (bansuri), traditional music education, and cultural arts. Experience authentic guru-shishya parampara with expert mentorship. Please verify your email address to begin your musical journey:</p>
-            <a href="${verificationLink}" class="button">Verify Email & Begin Journey</a>
-            <p>If you didn't create an account with Bansuri Vidya Mandir, please disregard this email.</p>
+            <h2>Verify Your Email</h2>
+            <p>Dear Valued Customer,</p>
+            <p>Welcome to EcomSupplements - your trusted source for premium quality supplements. Please verify your email address to access your account:</p>
+            <a href="${verificationLink}" class="button">Verify Email Now</a>
+            <p>If you didn't create an account with EcomSupplements, please disregard this email.</p>
+            
+            <div class="features">
+                <h3>What you can do after verification:</h3>
+                <div class="feature-item">Shop for premium quality supplements</div>
+                <div class="feature-item">Track your orders easily</div>
+                <div class="feature-item">Receive exclusive offers and updates</div>
+                <div class="feature-item">Manage your subscription preferences</div>
+            </div>
         </div>
         <div class="footer">
-            © ${new Date().getFullYear()} Bansuri Vidya Mandir | Indian Classical Music Institute<br>
+            © ${new Date().getFullYear()} EcomSupplements | Premium Health Supplements<br>
             This is an automated message. Please do not reply to this email.
         </div>
     </div>
@@ -259,7 +267,7 @@ export const getResetTemplate = (resetLink) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Your Password - Bansuri Vidya Mandir</title>
+    <title>Reset Your Password - EcomSupplements</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -278,7 +286,7 @@ export const getResetTemplate = (resetLink) => `
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: linear-gradient(135deg, #ff0000, #cc0000);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: #ffffff;
             text-align: center;
             padding: 40px;
@@ -305,7 +313,7 @@ export const getResetTemplate = (resetLink) => `
         .button {
             display: inline-block;
             padding: 15px 35px;
-            background: linear-gradient(135deg, #ff0000, #cc0000);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
@@ -331,17 +339,18 @@ export const getResetTemplate = (resetLink) => `
 <body>
     <div class="container">
         <div class="header">
-            <h1>Secure Your Account</h1>
+            <h1>Reset Your Password</h1>
         </div>
         <div class="content">
-            <h2>Reset Your Password</h2>
-            <p>Dear Valued Student,</p>
-            <p>We received a request to reset the password for your Bansuri Vidya Mandir account. To ensure the security of your account and maintain uninterrupted access to your music lessons and resources, please click the button below:</p>
+            <h2>Password Reset Request</h2>
+            <p>Dear Valued Customer,</p>
+            <p>We received a request to reset the password for your EcomSupplements account. Click the button below to create a new password:</p>
             <a href="${resetLink}" class="button">Reset Password</a>
-            <p>If you didn't request this password reset, please contact our support team immediately at bansurividya@gmail.com</p>
+            <p>If you didn't request this password reset, please contact our support team immediately at support@ecomsupplements.com</p>
+            <p>This link will expire in 15 minutes for security reasons.</p>
         </div>
         <div class="footer">
-            © ${new Date().getFullYear()} Bansuri Vidya Mandir | Indian Classical Music Institute<br>
+            © ${new Date().getFullYear()} EcomSupplements | Premium Health Supplements<br>
             This is an automated message. Please do not reply to this email.
         </div>
     </div>
@@ -436,7 +445,9 @@ export const getFeeReceiptTemplate = (data) => `
             <div class="payment-details">
                 <p><strong>Amount Paid:</strong> ₹${data.amount}</p>
                 <p><strong>Payment ID:</strong> ${data.paymentId}</p>
-                <p><strong>Date:</strong> ${new Date(data.date).toLocaleDateString()}</p>
+                <p><strong>Date:</strong> ${new Date(
+                  data.date
+                ).toLocaleDateString()}</p>
             </div>
             <p>Please find your receipt attached to this email. We look forward to continuing your musical journey with us.</p>
         </div>
@@ -534,29 +545,47 @@ export const getFeeNotificationTemplate = (data) => `
                 </div>
                 <div class="fee-item">
                     <strong>Due Date:</strong>
-                    <span class="important">${new Date(data.dueDate).toLocaleDateString()}</span>
+                    <span class="important">${new Date(
+                      data.dueDate
+                    ).toLocaleDateString()}</span>
                 </div>
-                ${data.description ? `
+                ${
+                  data.description
+                    ? `
                 <div class="fee-item">
                     <strong>Description:</strong>
                     <span>${data.description}</span>
                 </div>
-                ` : ''}
-                ${data.lateFeeDate ? `
+                `
+                    : ""
+                }
+                ${
+                  data.lateFeeDate
+                    ? `
                 <div class="fee-item">
                     <strong>Late Fee After:</strong>
-                    <span class="important">${new Date(data.lateFeeDate).toLocaleDateString()}</span>
+                    <span class="important">${new Date(
+                      data.lateFeeDate
+                    ).toLocaleDateString()}</span>
                 </div>
-                ` : ''}
-                ${data.lateFeeAmount ? `
+                `
+                    : ""
+                }
+                ${
+                  data.lateFeeAmount
+                    ? `
                 <div class="fee-item">
                     <strong>Late Fee Amount:</strong>
                     <span class="important">₹${data.lateFeeAmount}</span>
                 </div>
-                ` : ''}
+                `
+                    : ""
+                }
             </div>
             <p>Please ensure timely payment to continue your uninterrupted musical education with us.</p>
-            <a href="${process.env.FRONTEND_URL}/dashboard/fees" class="btn">View Fee Details</a>
+            <a href="${
+              process.env.FRONTEND_URL
+            }/dashboard/fees" class="btn">View Fee Details</a>
         </div>
         <div class="footer">
             <p>© ${new Date().getFullYear()} Bansuri Vidya Mandir | Indian Classical Music Institute</p>
@@ -659,13 +688,13 @@ export const getPaymentSuccessTemplate = (data) => `
                 </div>
                 <div class="detail-row">
                     <strong>Date:</strong>
-                    <span>${new Date(data.date).toLocaleString('en-IN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-})}</span>
+                    <span>${new Date(data.date).toLocaleString("en-IN", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Fee Type:</strong>
@@ -760,9 +789,13 @@ export const getPaymentFailureTemplate = (data) => `
             <div class="error-box">
                 <h3>Transaction Details:</h3>
                 <p><strong>Amount:</strong> ₹${data.amount}</p>
-                <p><strong>Date:</strong> ${new Date(data.date).toLocaleString('en-IN')}</p>
+                <p><strong>Date:</strong> ${new Date(data.date).toLocaleString(
+                  "en-IN"
+                )}</p>
                 <p><strong>Fee Type:</strong> ${data.feeTitle}</p>
-                <p><strong>Error:</strong> ${data.error || 'Transaction could not be completed'}</p>
+                <p><strong>Error:</strong> ${
+                  data.error || "Transaction could not be completed"
+                }</p>
             </div>
 
             <p>Possible reasons for payment failure:</p>
@@ -775,7 +808,9 @@ export const getPaymentFailureTemplate = (data) => `
 
             <p>Please try again or contact your bank if the issue persists.</p>
             
-            <a href="${process.env.FRONTEND_URL}/dashboard/fees" class="retry-button">
+            <a href="${
+              process.env.FRONTEND_URL
+            }/dashboard/fees" class="retry-button">
                 Retry Payment
             </a>
         </div>
@@ -788,7 +823,15 @@ export const getPaymentFailureTemplate = (data) => `
 </html>
 `;
 
-export const getFeeUpdateTemplate = ({ name, feeTitle, oldAmount, newAmount, oldDate, newDate, reason }) => `
+export const getFeeUpdateTemplate = ({
+  name,
+  feeTitle,
+  oldAmount,
+  newAmount,
+  oldDate,
+  newDate,
+  reason,
+}) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -932,12 +975,16 @@ export const getCertificateGeneratedTemplate = (data) => `
             
             <div class="certificate-info">
                 <p><strong>Your certificate of musical excellence has been generated!</strong></p>
-                <p>Certificate ID: <span class="certificate-id">${data.certificateId}</span></p>
+                <p>Certificate ID: <span class="certificate-id">${
+                  data.certificateId
+                }</span></p>
                 <p>You can now access and download your certificate from your profile. This marks an important milestone in your musical journey with us.</p>
             </div>
 
             <center>
-                <a href="${process.env.FRONTEND_URL}/user-profile" class="button">View Certificate</a>
+                <a href="${
+                  process.env.FRONTEND_URL
+                }/user-profile" class="button">View Certificate</a>
             </center>
 
             <p>This certificate validates your dedication to Indian classical music and your commitment to learning. Continue on the path of musical excellence!</p>
@@ -1030,7 +1077,7 @@ export const getContactFormTemplate = (data) => `
             <h1>New Music Inquiry</h1>
         </div>
         <div class="content">
-            <h2>${data.subject || 'Inquiry About Music Education'}</h2>
+            <h2>${data.subject || "Inquiry About Music Education"}</h2>
             
             <div class="message-box">
                 <p>${data.message}</p>
@@ -1056,6 +1103,200 @@ export const getContactFormTemplate = (data) => `
         <div class="footer">
             © ${new Date().getFullYear()} Bansuri Vidya Mandir | Indian Classical Music Institute<br>
             This is an automated message from your website contact form.
+        </div>
+    </div>
+</body>
+</html>
+`;
+
+export const getOrderConfirmationTemplate = (data) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - EcomSupplements</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+        }
+        .content {
+            padding: 30px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        h2 {
+            color: #1a1a1a;
+            font-size: 22px;
+            margin-top: 0;
+        }
+        .order-details {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .order-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666666;
+            background-color: #f8f8f8;
+        }
+        .detail-row {
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .order-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .order-items th {
+            background-color: #e9ecef;
+            padding: 10px;
+            text-align: left;
+        }
+        .order-items td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .total-row {
+            font-weight: bold;
+            border-top: 2px solid #dee2e6;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Confirmation</h1>
+        </div>
+        <div class="content">
+            <h2>Thank You For Your Order!</h2>
+            <p>Dear ${data.userName},</p>
+            <p>We've received your order and are working on it. Here's a summary of your purchase:</p>
+            
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="detail-label">Order Number:</span>
+                    <span>${data.orderNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Order Date:</span>
+                    <span>${new Date(
+                      data.orderDate
+                    ).toLocaleDateString()}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method:</span>
+                    <span>${data.paymentMethod}</span>
+                </div>
+            </div>
+            
+            <table class="order-items">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.items
+                      .map(
+                        (item) => `
+                    <tr>
+                        <td>${item.name} ${item.variant}</td>
+                        <td>${item.quantity}</td>
+                        <td>₹${item.price}</td>
+                    </tr>
+                    `
+                      )
+                      .join("")}
+                    <tr class="total-row">
+                        <td colspan="2">Subtotal</td>
+                        <td>₹${data.subtotal}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Shipping</td>
+                        <td>₹${data.shipping}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Tax</td>
+                        <td>₹${data.tax}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2">Total</td>
+                        <td>₹${data.total}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="order-summary">
+                <h3>Shipping Address:</h3>
+                <p>
+                    ${data.shippingAddress.name}<br>
+                    ${data.shippingAddress.street}<br>
+                    ${data.shippingAddress.city}, ${
+  data.shippingAddress.state
+} ${data.shippingAddress.postalCode}<br>
+                    ${data.shippingAddress.country}
+                </p>
+            </div>
+            
+            <p>You can track your order status in your account dashboard:</p>
+            <a href="${
+              process.env.FRONTEND_URL
+            }/account/orders" class="button">Track Your Order</a>
+        </div>
+        <div class="footer">
+            © ${new Date().getFullYear()} EcomSupplements | Premium Health Supplements<br>
+            Questions? Contact our customer support at support@ecomsupplements.com
         </div>
     </div>
 </body>
