@@ -47,7 +47,6 @@ function FlavorsList() {
       try {
         setIsLoading(true);
         const response = await flavors.getFlavors();
-        console.log("Flavors response:", response); // Debug logging
 
         if (response.data.success) {
           setFlavorsList(response.data.data?.flavors || []);

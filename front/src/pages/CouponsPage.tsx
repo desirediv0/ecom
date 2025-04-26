@@ -13,10 +13,10 @@ import {
   Edit,
   AlertTriangle,
   PercentIcon,
-  DollarSign,
   Calendar,
   CheckCircle,
   XCircle,
+  IndianRupee,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -198,7 +198,7 @@ function CouponsList() {
                           </>
                         ) : (
                           <>
-                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            <IndianRupee className="h-4 w-4 text-muted-foreground" />
                             <span>₹{coupon.discountValue} off</span>
                           </>
                         )}
@@ -477,7 +477,7 @@ function CouponForm({
                   {formData.discountType === "PERCENTAGE" ? (
                     <PercentIcon className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    <IndianRupee className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
                 <Input
@@ -503,7 +503,7 @@ function CouponForm({
               </label>
               <div className="flex">
                 <div className="flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <IndianRupee className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <Input
                   id="minOrderAmount"

@@ -1,41 +1,56 @@
 // utils/fileHandlers.js
-import multer from 'multer';
-import sharp from 'sharp';
-import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import s3client from '../utils/s3client.js';
-
+import multer from "multer";
+import sharp from "sharp";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import s3client from "../utils/s3client.js";
 
 // Set up multer storage
 const storage = multer.memoryStorage();
 export const uploadFiles = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit for PDFs and audio
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit for PDFs and audio
 });
 
 // Function to process and upload image
-export const processAndUploadImage = async (file) => {
+export const processAndUploadImage = async (file, subfolder = "images") => {
   const { originalname, buffer } = file;
-  const filename = `${process.env.UPLOAD_FOLDER}/images/${Date.now()}-${originalname.toLowerCase().split(' ').join('-')}`;
+
+  // Sanitize filename and add timestamp
+  const timestamp = Date.now();
+  const sanitizedName = originalname.toLowerCase().replace(/[^a-z0-9.]/g, "-");
+  const fileExtension = originalname.split(".").pop().toLowerCase();
+
+  // Use UPLOAD_FOLDER from environment variables for consistency
+  const uploadFolder = process.env.UPLOAD_FOLDER || "ecom-uploads";
+  const filename = `${uploadFolder}/${subfolder}/${timestamp}-${sanitizedName}`;
 
   try {
+    // Process image with sharp to optimize
     const processedBuffer = await sharp(buffer)
-      .resize(800)
-      .jpeg({ quality: 80 })
+      .resize(1200, null, { withoutEnlargement: true })
       .toBuffer();
 
+    // Upload to S3 with proper content type
     await s3client.send(
       new PutObjectCommand({
         Bucket: process.env.SPACES_BUCKET,
         Key: filename,
         Body: processedBuffer,
-        ACL: 'public-read',
-        ContentType: 'image/jpeg'
+        ACL: "public-read",
+        ContentType: `image/${
+          fileExtension === "png"
+            ? "png"
+            : fileExtension === "gif"
+            ? "gif"
+            : "jpeg"
+        }`,
       })
     );
 
+    console.log(`Successfully uploaded image to S3: ${filename}`);
     return filename;
   } catch (error) {
-    console.error('Image processing/upload failed:', error);
+    console.error("Image processing/upload failed:", error);
     throw error;
   }
 };
@@ -43,7 +58,13 @@ export const processAndUploadImage = async (file) => {
 // Function to upload PDF
 export const uploadPDF = async (file) => {
   const { originalname, buffer, mimetype } = file;
-  const filename = `${process.env.UPLOAD_FOLDER}/pdfs/${Date.now()}-${originalname.toLowerCase().split(' ').join('-')}`;
+
+  // Use UPLOAD_FOLDER from environment variables
+  const uploadFolder = process.env.UPLOAD_FOLDER || "ecom-uploads";
+  const filename = `${uploadFolder}/pdfs/${Date.now()}-${originalname
+    .toLowerCase()
+    .split(" ")
+    .join("-")}`;
 
   try {
     await s3client.send(
@@ -51,14 +72,14 @@ export const uploadPDF = async (file) => {
         Bucket: process.env.SPACES_BUCKET,
         Key: filename,
         Body: buffer,
-        ACL: 'public-read',
-        ContentType: mimetype || 'application/pdf'
+        ACL: "public-read",
+        ContentType: mimetype || "application/pdf",
       })
     );
 
     return filename;
   } catch (error) {
-    console.error('PDF upload failed:', error);
+    console.error("PDF upload failed:", error);
     throw error;
   }
 };
@@ -66,7 +87,13 @@ export const uploadPDF = async (file) => {
 // Function to upload Audio
 export const uploadAudio = async (file) => {
   const { originalname, buffer, mimetype } = file;
-  const filename = `${process.env.UPLOAD_FOLDER}/audio/${Date.now()}-${originalname.toLowerCase().split(' ').join('-')}`;
+
+  // Use UPLOAD_FOLDER from environment variables
+  const uploadFolder = process.env.UPLOAD_FOLDER || "ecom-uploads";
+  const filename = `${uploadFolder}/audio/${Date.now()}-${originalname
+    .toLowerCase()
+    .split(" ")
+    .join("-")}`;
 
   try {
     await s3client.send(
@@ -74,14 +101,14 @@ export const uploadAudio = async (file) => {
         Bucket: process.env.SPACES_BUCKET,
         Key: filename,
         Body: buffer,
-        ACL: 'public-read',
-        ContentType: mimetype || 'audio/mpeg'
+        ACL: "public-read",
+        ContentType: mimetype || "audio/mpeg",
       })
     );
 
     return filename;
   } catch (error) {
-    console.error('Audio upload failed:', error);
+    console.error("Audio upload failed:", error);
     throw error;
   }
 };
@@ -91,7 +118,10 @@ export const processFiles = async (req, res, next) => {
   try {
     // Process thumbnail/image if exists
     if (req.files?.thumbnail) {
-      const filename = await processAndUploadImage(req.files.thumbnail[0]);
+      const filename = await processAndUploadImage(
+        req.files.thumbnail[0],
+        "thumbnails"
+      );
       req.files.thumbnail[0].filename = filename;
     }
 
@@ -127,11 +157,11 @@ export const deleteFile = async (fileUrl) => {
     let Key;
 
     // Check if fileUrl is a full URL
-    if (fileUrl.startsWith('http')) {
+    if (fileUrl.startsWith("http")) {
       const parsedUrl = new URL(fileUrl);
       Key = parsedUrl.pathname.slice(1);
     } else {
-      Key = fileUrl.startsWith('/') ? fileUrl.slice(1) : fileUrl;
+      Key = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
     }
 
     await s3client.send(
@@ -143,7 +173,7 @@ export const deleteFile = async (fileUrl) => {
 
     console.log(`File deleted: ${Key}`);
   } catch (error) {
-    console.error('File deletion error:', error);
+    console.error("File deletion error:", error);
     throw error;
   }
 };

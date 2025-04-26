@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { orders } from "@/api/adminService";
-import { inventory } from "@/api/adminService";
 import { Card } from "@/components/ui/card";
 import {
   LineChart,
@@ -28,7 +27,6 @@ import {
 export default function DashboardPage() {
   const { admin } = useAuth();
   const [orderStats, setOrderStats] = useState<any>(null);
-  const [inventoryStats, setInventoryStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,10 +40,6 @@ export default function DashboardPage() {
         // Load order stats
         const orderStatsData = await orders.getOrderStats();
         setOrderStats(orderStatsData.data);
-
-        // Load inventory stats
-        const inventoryStatsData = await inventory.getInventoryOverview();
-        setInventoryStats(inventoryStatsData.data);
       } catch (error: any) {
         console.error("Error fetching dashboard data:", error);
         setError("Failed to load dashboard data. Please try again.");
@@ -103,7 +97,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Total Orders */}
         <Card className="flex flex-col p-6">
           <div className="flex items-center justify-between">
@@ -165,46 +159,6 @@ export default function DashboardPage() {
               </>
             )}
             <span className="ml-1 text-muted-foreground">vs. last month</span>
-          </div>
-        </Card>
-
-        {/* Products In Stock */}
-        <Card className="flex flex-col p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-muted-foreground">
-              Products In Stock
-            </p>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="mt-3">
-            <p className="text-2xl font-bold">
-              {inventoryStats?.totalVariants || 0}
-            </p>
-          </div>
-          <div className="mt-2 flex items-center text-xs">
-            <span className="text-muted-foreground">
-              {inventoryStats?.inStockPercentage || 0}% in stock
-            </span>
-          </div>
-        </Card>
-
-        {/* Low Stock */}
-        <Card className="flex flex-col p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-muted-foreground">
-              Low Stock Items
-            </p>
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
-          </div>
-          <div className="mt-3">
-            <p className="text-2xl font-bold">
-              {inventoryStats?.lowStockCount || 0}
-            </p>
-          </div>
-          <div className="mt-2 flex items-center text-xs">
-            <span className="text-muted-foreground">
-              {inventoryStats?.outOfStockCount || 0} items out of stock
-            </span>
           </div>
         </Card>
       </div>
@@ -300,55 +254,6 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
-
-      {/* Recent Activity */}
-      <Card className="p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-medium">Recent Inventory Activity</h3>
-          <p className="text-sm text-muted-foreground">
-            Latest inventory changes
-          </p>
-        </div>
-        <div className="divide-y">
-          {inventoryStats?.recentLogs?.map((log: any) => (
-            <div key={log.id} className="py-3">
-              <div className="flex justify-between">
-                <div>
-                  <p className="font-medium">
-                    {log.variant.product.name} - {log.variant.flavor?.name}{" "}
-                    {log.variant.weight?.value}
-                    {log.variant.weight?.unit}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {log.reason} - {log.notes}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p
-                    className={`font-medium ${
-                      log.quantityChange > 0
-                        ? "text-green-500"
-                        : "text-destructive"
-                    }`}
-                  >
-                    {log.quantityChange > 0 ? "+" : ""}
-                    {log.quantityChange}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(log.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-          {(!inventoryStats?.recentLogs ||
-            inventoryStats.recentLogs.length === 0) && (
-            <p className="py-3 text-center text-sm text-muted-foreground">
-              No recent activity
-            </p>
-          )}
-        </div>
-      </Card>
     </div>
   );
 }

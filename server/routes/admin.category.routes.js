@@ -154,10 +154,9 @@ router.post(
 
       // Upload image to S3 if provided
       if (req.file) {
-        imageKey = `categories/${uuidv4()}-${req.file.originalname.replace(
-          /\s+/g,
-          "-"
-        )}`;
+        imageKey = `${
+          process.env.UPLOAD_FOLDER
+        }/categories/${uuidv4()}-${req.file.originalname.replace(/\s+/g, "-")}`;
 
         await s3client.send(
           new PutObjectCommand({
@@ -301,10 +300,9 @@ router.patch(
         }
 
         // Upload new image
-        imageKey = `categories/${uuidv4()}-${req.file.originalname.replace(
-          /\s+/g,
-          "-"
-        )}`;
+        imageKey = `${
+          process.env.UPLOAD_FOLDER
+        }/categories/${uuidv4()}-${req.file.originalname.replace(/\s+/g, "-")}`;
 
         await s3client.send(
           new PutObjectCommand({

@@ -3,13 +3,7 @@ export interface Admin {
   email: string;
   firstName: string;
   lastName: string;
-  role:
-    | "SUPER_ADMIN"
-    | "ADMIN"
-    | "MANAGER"
-    | "CONTENT_EDITOR"
-    | "SUPPORT_AGENT"
-    | string;
+  role: "SUPER_ADMIN" | "ADMIN" | "MANAGER" | "SUPPORT_AGENT" | string;
   permissions: string[];
   lastLogin?: string;
   isActive?: boolean;
@@ -30,7 +24,6 @@ export enum Role {
   SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   MANAGER = "MANAGER",
-  CONTENT_EDITOR = "CONTENT_EDITOR",
   SUPPORT_AGENT = "SUPPORT_AGENT",
 }
 

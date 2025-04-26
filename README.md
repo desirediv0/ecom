@@ -1,175 +1,103 @@
-# Ecommerce Dashboard & API
+# E-Commerce Dashboard
 
-A comprehensive ecommerce platform with a RESTful API for managing supplements and other products.
+A modern e-commerce dashboard for managing products, orders, categories, and more.
 
-## Features
+## Recent Updates
 
-### User Management
+### Auto-generated SKUs
 
-- Authentication (Register, Login, Logout)
-- Profile Management
-- Addresses Management
-- Wishlists
-- Order History
-- Reviews
-- Shopping Cart
+Products and variants now have auto-generated SKUs based on:
 
-### Admin Dashboard
+- Product name (first 3 characters)
+- Category name (first 2 characters)
+- Price (last 3 digits)
+- Variant information (if applicable)
+- Random suffix for uniqueness
 
-- Admin Authentication
-- Role-based Access Control
-- Product Management
-- Category Management
-- Order Management
-- Customer Management
-- Sales Analytics
+Example SKU format: `PRO-CA-999-VA123`
 
-### Products
+### Image Upload Improvements
 
-- Categories & Subcategories
-- Products with Variants (Flavors, Weights)
-- Images Management
-- Inventory Tracking
+All file uploads now use a consistent path structure:
 
-### Orders
+- Base path: `UPLOAD_FOLDER` environment variable (defaults to "ecom-uploads")
+- Subdirectories for different content types:
+  - Products: `{UPLOAD_FOLDER}/products/{productId}/{timestamp}-{filename}`
+  - Flavors: `{UPLOAD_FOLDER}/flavors/{uuid}-{filename}`
+  - Categories: `{UPLOAD_FOLDER}/categories/{uuid}-{filename}`
 
-- Cart Management
-- Checkout Process
-- Payment Integration (Razorpay)
-- Order Tracking
-- Shipping Updates
+### Removed Features
 
-## Technology Stack
+- Removed inventory management section
+  - Product quantities are now managed directly in the product/variant forms
+  - Removed inventory logs, statistics, and dedicated pages
 
-- **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: JWT (JSON Web Tokens)
-- **File Storage**: Digital Ocean Spaces (S3-compatible)
-- **Payment Gateway**: Razorpay
-
-## Project Structure
+## File Structure
 
 ```
-├── server/               # Backend code
-│   ├── config/           # Configuration files
-│   ├── controllers/      # Request handlers
-│   ├── email/            # Email templates
-│   ├── helper/           # Helper functions
-│   ├── middlewares/      # Middleware functions
-│   ├── prisma/           # Prisma schema and migrations
-│   ├── routes/           # API routes
-│   ├── utils/            # Utility functions
-│   ├── app.js            # Express application
-│   └── index.js          # Entry point
-└── client/               # Frontend code (React)
+server/
+  ├── controllers/   # API controllers
+  ├── middlewares/   # Auth and file handling
+  ├── routes/        # API endpoints
+  ├── utils/         # Helper functions
+  ├── prisma/        # Database schema
+  └── app.js         # Main server file
+
+front/
+  ├── src/
+  │   ├── api/       # API client
+  │   ├── components/# UI components
+  │   ├── context/   # Auth context
+  │   ├── layouts/   # Dashboard layout
+  │   ├── lib/       # Utilities
+  │   ├── pages/     # Page components
+  │   ├── types/     # TypeScript types
+  │   └── App.tsx    # Main app component
+  ├── public/        # Static assets
+  └── index.html     # Entry HTML
+```
+
+## Key Features
+
+- **Product Management**: Create, edit, and delete products with variants
+- **Order Management**: Track and manage orders with different statuses
+- **Category Management**: Organize products into categories
+- **Flavors & Weights**: Define product attributes for variants
+- **User Authentication**: Secure admin login with permissions
+- **Dashboard**: View sales statistics and performance metrics
+
+## Environment Variables
+
+```
+# Database
+DATABASE_URL=
+
+# Authentication
+ACCESS_JWT_SECRET=
+REFRESH_JWT_SECRET=
+ADMIN_JWT_SECRET=
+
+# S3 Storage
+SPACES_ENDPOINT=
+SPACES_REGION=
+SPACES_ACCESS_KEY=
+SPACES_SECRET_KEY=
+SPACES_BUCKET=
+UPLOAD_FOLDER=ecom-uploads
+
+# Payment Gateway
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+
+# Server
+PORT=4000
+CORS_ORIGIN=http://localhost:3000,http://localhost:5173
 ```
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js (v14+)
-- PostgreSQL
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/ecom-dashboard.git
-   cd ecom-dashboard
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   # Install server dependencies
-   cd server
-   npm install
-
-   # Install client dependencies
-   cd ../client
-   npm install
-   ```
-
-3. Set up environment variables:
-
-   ```bash
-   # In the server directory
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. Set up the database:
-
-   ```bash
-   cd server
-   npx prisma migrate dev
-   ```
-
-5. Start the development servers:
-
-   ```bash
-   # Start the backend server
-   cd server
-   npm run dev
-
-   # In a new terminal, start the frontend
-   cd client
-   npm run dev
-   ```
-
-## API Documentation
-
-The API endpoints are organized by resources:
-
-### User Endpoints
-
-- `POST /api/users/register` - Register a new user
-- `POST /api/users/login` - Login
-- `POST /api/users/logout` - Logout
-- `GET /api/users/me` - Get user profile
-- `PATCH /api/users/update-profile` - Update user profile
-- ... and more
-
-### Cart Endpoints
-
-- `GET /api/cart` - Get user's cart
-- `POST /api/cart/add` - Add item to cart
-- `PATCH /api/cart/update/:cartItemId` - Update cart item quantity
-- `DELETE /api/cart/remove/:cartItemId` - Remove item from cart
-- `DELETE /api/cart/clear` - Clear cart
-
-### Admin Endpoints
-
-- `POST /api/admin/login` - Admin login
-- `GET /api/admin/products` - Get all products
-- `POST /api/admin/products` - Create a new product
-- `GET /api/admin/categories` - Get all categories
-- `POST /api/admin/categories` - Create a new category
-- ... and more
-
-### Public Endpoints
-
-- `GET /api/categories` - Get all categories
-- `GET /api/categories/:slug/products` - Get products by category
-- `GET /api/products` - Get all products (with filtering)
-- `GET /api/products/:slug` - Get product details by slug
-- `GET /api/product-variant` - Get product variant details
-- `GET /api/flavors` - Get all flavors
-- `GET /api/weights` - Get all weights
-
-For a complete list of endpoints and request/response formats, see the API documentation.
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+1. Clone the repository
+2. Install dependencies: `npm install` in both server and front directories
+3. Set up environment variables in server/.env
+4. Start server: `cd server && npm start`
+5. Start frontend: `cd front && npm run dev`

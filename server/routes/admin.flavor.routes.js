@@ -110,7 +110,9 @@ router.post("/flavors", isAdmin, upload.single("image"), async (req, res) => {
 
     // Upload image to S3 if provided
     if (req.file) {
-      imageKey = `flavors/${uuidv4()}-${req.file.originalname.replace(
+      // Use the upload folder from environment variable for consistency
+      const uploadFolder = process.env.UPLOAD_FOLDER || "ecom-uploads";
+      imageKey = `${uploadFolder}/flavors/${uuidv4()}-${req.file.originalname.replace(
         /\s+/g,
         "-"
       )}`;
@@ -209,8 +211,9 @@ router.patch(
           await deleteFromS3(existingFlavor.image);
         }
 
-        // Upload new image
-        imageKey = `flavors/${uuidv4()}-${req.file.originalname.replace(
+        // Upload new image using the environment variable
+        const uploadFolder = process.env.UPLOAD_FOLDER || "ecom-uploads";
+        imageKey = `${uploadFolder}/flavors/${uuidv4()}-${req.file.originalname.replace(
           /\s+/g,
           "-"
         )}`;

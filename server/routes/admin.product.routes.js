@@ -10,6 +10,7 @@ import {
   createProductVariant,
   updateProductVariant,
   deleteProductVariant,
+  bulkVariantOperations,
   getFlavors,
   createFlavor,
   updateFlavor,
@@ -46,6 +47,7 @@ router.post(
   "/products",
   verifyAdminJWT,
   hasPermission("products", "create"),
+  uploadFiles.array("images"),
   createProduct
 );
 
@@ -53,6 +55,7 @@ router.patch(
   "/products/:productId",
   verifyAdminJWT,
   hasPermission("products", "update"),
+  uploadFiles.array("images"),
   updateProduct
 );
 
@@ -85,6 +88,14 @@ router.post(
   verifyAdminJWT,
   hasPermission("products", "update"),
   createProductVariant
+);
+
+// New bulk variant operations route
+router.post(
+  "/products/:productId/bulk-variants",
+  verifyAdminJWT,
+  hasPermission("products", "update"),
+  bulkVariantOperations
 );
 
 router.patch(

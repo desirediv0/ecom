@@ -106,38 +106,39 @@ model Address {
 
 // Product Management
 model Category {
-  id          String     @id @default(uuid())
-  name        String     @unique
+  id          String            @id @default(uuid())
+  name        String            @unique
   description String?
   image       String?
-  slug        String     @unique
+  slug        String            @unique
   parentId    String?
-  parent      Category?  @relation("CategorySubcategories", fields: [parentId], references: [id])
-  children    Category[] @relation("CategorySubcategories")
-  products    Product[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  parent      Category?         @relation("CategorySubcategories", fields: [parentId], references: [id])
+  children    Category[]        @relation("CategorySubcategories")
+  products    ProductCategory[] // Changed to use the junction table
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
 
 model Product {
-  id            String           @id @default(uuid())
-  name          String
-  description   String?
-  slug          String           @unique
-  categoryId    String
-  category      Category         @relation(fields: [categoryId], references: [id])
-  isSupplement  Boolean          @default(true) // Flag to identify if it's a supplement product
-  ingredients   String?
-  nutritionInfo Json? // Nutrition facts as JSON
-  featured      Boolean          @default(false)
-  isActive      Boolean          @default(true)
-  images        ProductImage[]
-  variants      ProductVariant[] // Different combinations of flavor and weight
-  reviews       Review[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  wishlistItems WishlistItem[]
-  orderItems    OrderItem[]
+  id                String            @id @default(uuid())
+  name              String
+  description       String?
+  slug              String            @unique
+  primaryCategoryId String? // Keep a primary category reference
+  categories        ProductCategory[] // Many-to-many relationship with categories
+  hasVariants       Boolean           @default(false)
+  isSupplement      Boolean           @default(true)
+  ingredients       String?
+  nutritionInfo     Json?
+  featured          Boolean           @default(false)
+  isActive          Boolean           @default(true)
+  images            ProductImage[]
+  variants          ProductVariant[]
+  reviews           Review[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  wishlistItems     WishlistItem[]
+  orderItems        OrderItem[]
 }
 
 model ProductImage {
@@ -442,4 +443,17 @@ model InventoryLog {
   notes            String?
   createdAt        DateTime @default(now())
   createdBy        String // Admin ID who made the change
+}
+
+// Create a junction table for the many-to-many relationship
+model ProductCategory {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  isPrimary  Boolean  @default(false) // Flag to mark the primary category
+  createdAt  DateTime @default(now())
+
+  @@unique([productId, categoryId])
 }

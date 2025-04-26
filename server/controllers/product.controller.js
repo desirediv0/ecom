@@ -378,12 +378,23 @@ export const getProductVariant = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Product variant not found");
   }
 
+  // Format the variant response with proper image URL
+  const formattedVariant = {
+    ...variant,
+    flavor: variant.flavor
+      ? {
+          ...variant.flavor,
+          image: variant.flavor.image ? getFileUrl(variant.flavor.image) : null,
+        }
+      : null,
+  };
+
   res
     .status(200)
     .json(
       new ApiResponsive(
         200,
-        { variant },
+        { variant: formattedVariant },
         "Product variant fetched successfully"
       )
     );

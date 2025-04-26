@@ -44,7 +44,6 @@ function WeightsList() {
       try {
         setIsLoading(true);
         const response = await weights.getWeights();
-        console.log("Weights response:", response); // Debug logging
 
         if (response.data.success) {
           setWeightsList(response.data.data?.weights || []);

@@ -9,11 +9,9 @@ import {
   ShoppingCart,
   Users,
   Tags,
-  Settings,
   LogOut,
   Menu,
   X,
-  BarChart3,
   Coffee,
   Scale,
   Ticket,
@@ -182,15 +180,6 @@ export default function DashboardLayout() {
                 hasPermission={hasPermissionFor(admin, Resource.CATEGORIES)}
               />
               <NavItem
-                href="/inventory"
-                icon={<BarChart3 className="h-5 w-5" />}
-                title="Inventory"
-                hasPermission={hasPermissionFor(
-                  admin,
-                  CUSTOM_RESOURCES.INVENTORY
-                )}
-              />
-              <NavItem
                 href="/coupons"
                 icon={<Ticket className="h-5 w-5" />}
                 title="Coupons"
@@ -204,16 +193,6 @@ export default function DashboardLayout() {
                 icon={<Users className="h-5 w-5" />}
                 title="Admins"
                 hasPermission={admin?.role === "SUPER_ADMIN"}
-              />
-              <NavItem
-                href="/settings"
-                icon={<Settings className="h-5 w-5" />}
-                title="Settings"
-                hasPermission={hasPermissionFor(
-                  admin,
-                  Resource.SETTINGS,
-                  Action.READ
-                )}
               />
             </div>
           </SafeRender>
@@ -333,16 +312,6 @@ export default function DashboardLayout() {
                 hasPermission={hasPermissionFor(admin, Resource.CATEGORIES)}
               />
               <NavItem
-                href="/inventory"
-                icon={<BarChart3 className="h-5 w-5" />}
-                title="Inventory"
-                onClick={toggleMobileMenu}
-                hasPermission={hasPermissionFor(
-                  admin,
-                  CUSTOM_RESOURCES.INVENTORY
-                )}
-              />
-              <NavItem
                 href="/coupons"
                 icon={<Ticket className="h-5 w-5" />}
                 title="Coupons"
@@ -358,17 +327,6 @@ export default function DashboardLayout() {
                 title="Admins"
                 onClick={toggleMobileMenu}
                 hasPermission={admin?.role === "SUPER_ADMIN"}
-              />
-              <NavItem
-                href="/settings"
-                icon={<Settings className="h-5 w-5" />}
-                title="Settings"
-                onClick={toggleMobileMenu}
-                hasPermission={hasPermissionFor(
-                  admin,
-                  Resource.SETTINGS,
-                  Action.READ
-                )}
               />
             </div>
           </SafeRender>
